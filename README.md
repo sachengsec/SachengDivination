@@ -1,4 +1,4 @@
-# Sacheng Divination (六爻排盘)
+# Sacheng Divination
 
 专业六爻排盘在线工具，基于周易纳甲法，支持多种起卦方式，提供完整的卦象分析。
 
