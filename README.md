@@ -2,6 +2,9 @@
 
 专业六爻排盘在线工具，基于周易纳甲法，支持多种起卦方式，提供完整的卦象分析。
 
+![License](https://img.shields.io/badge/license-AGPL--3.0-blue.svg)
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white)
+
 ## 功能特性
 
 ### 起卦方式
