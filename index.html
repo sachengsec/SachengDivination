@@ -1,0 +1,1493 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>六爻排盘 · 周易占卜</title>
+    <meta name="description" content="专业六爻排盘在线工具，支持手动摇卦、自动起卦，提供完整纳甲、六亲、六神、世应分析">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=Ma+Shan+Zheng&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        :root {
+            --bg: #fafafa;
+            --card: #ffffff;
+            --border: #e0e0e0;
+            --primary: #333333;
+            --secondary: #666666;
+            --accent: #2196f3;
+            --text: #333333;
+            --text-light: #666666;
+            --red: #f44336;
+        }
+
+        body {
+            font-family: 'Noto Serif SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            text-align: center;
+            padding: 40px 20px 30px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            color: var(--primary);
+            font-weight: 400;
+            letter-spacing: 4px;
+        }
+
+        .header .subtitle {
+            color: var(--text-light);
+            font-size: 14px;
+            margin-top: 8px;
+            letter-spacing: 2px;
+            font-weight: 300;
+        }
+
+        .divider {
+            width: 60px;
+            height: 1px;
+            margin: 20px auto;
+            background: var(--border);
+        }
+
+        /* ===== CARDS ===== */
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 16px;
+            color: var(--primary);
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+            font-weight: 400;
+        }
+
+        /* ===== INPUT SECTION ===== */
+        .input-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: end;
+            margin-bottom: 16px
+        }
+
+        .input-group {
+            flex: 1;
+            min-width: 200px
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            color: var(--text-light);
+            margin-bottom: 6px
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 8px 12px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 2px;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: 1px solid var(--border);
+            border-radius: 2px;
+            background: var(--card);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .btn-primary:hover {
+            background: #1976d2;
+            border-color: #1976d2;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 13px
+        }
+
+        /* ===== COIN ANIMATION ===== */
+        .coin-area {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            min-height: 60px
+        }
+
+        .coin {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: normal;
+            border: 2px solid var(--border);
+            background: var(--card);
+            color: var(--text);
+        }
+
+        .coin.flipping {
+            animation: coinFlip .6s ease-in-out
+        }
+
+        @keyframes coinFlip {
+            0% {
+                transform: rotateY(0)
+            }
+
+            50% {
+                transform: rotateY(900deg)
+            }
+
+            100% {
+                transform: rotateY(1800deg)
+            }
+        }
+
+        /* ===== MANUAL SHAKE ===== */
+        .manual-panel {
+            display: none;
+            text-align: center
+        }
+
+        .manual-panel.active {
+            display: block
+        }
+
+        .shake-progress {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 15px 0
+        }
+
+        .shake-dot {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            color: var(--text-light);
+            background: var(--card);
+        }
+
+        .shake-dot.done {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .shake-dot.current {
+            border-color: var(--accent);
+        }
+
+        .coin-btns {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 15px 0
+        }
+
+        .coin-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: var(--card);
+            color: var(--text);
+            font-size: 20px;
+            cursor: pointer;
+            transition: all .2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .coin-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .coin-result-text {
+            color: var(--text-light);
+            font-size: 13px;
+            margin-top: 5px
+        }
+
+        /* ===== HEXAGRAM DISPLAY ===== */
+        .result-area {
+            display: none
+        }
+
+        .result-area.active {
+            display: block;
+            animation: fadeIn .4s ease
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0
+            }
+
+            to {
+                opacity: 1
+            }
+        }
+
+        .hex-container {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px
+        }
+
+        .hex-panel {
+            flex: 1;
+            min-width: 300px;
+            max-width: 400px
+        }
+
+        .hex-panel-title {
+            text-align: center;
+            font-size: 18px;
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-weight: 400;
+            letter-spacing: 2px;
+        }
+
+        .hex-panel-subtitle {
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 15px
+        }
+
+        .hex-table {
+            width: 100%
+        }
+
+        .hex-row {
+            display: grid;
+            grid-template-columns: 55px 65px 1fr 85px 35px;
+            align-items: center;
+            padding: 8px 4px;
+            border-bottom: 1px solid var(--border);
+            gap: 4px;
+        }
+
+        .hex-row:hover {
+            background: #f5f5f5
+        }
+
+        .hex-spirit {
+            font-size: 12px;
+            color: var(--text-light)
+        }
+
+        .hex-relative {
+            font-size: 13px;
+            color: var(--text)
+        }
+
+        .hex-line-wrap {
+            display: flex;
+            justify-content: center;
+            padding: 4px 0
+        }
+
+        .hex-line {
+            position: relative;
+            width: 100%;
+            height: 8px;
+            display: flex;
+            gap: 8px;
+            justify-content: center
+        }
+
+        .yang-line {
+            width: 100%;
+            max-width: 100px;
+            height: 4px;
+            background: var(--primary);
+            border-radius: 1px;
+        }
+
+        .yin-line {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            max-width: 100px;
+            justify-content: center;
+        }
+
+        .yin-half {
+            flex: 1;
+            height: 4px;
+            background: var(--primary);
+            border-radius: 1px;
+        }
+
+        .hex-nayin {
+            font-size: 12px;
+            color: var(--text-light);
+            text-align: right;
+            white-space: nowrap
+        }
+
+        .hex-shiying {
+            font-size: 12px;
+            color: var(--red);
+            font-weight: normal;
+        }
+
+        .moving-marker {
+            position: absolute;
+            right: -18px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 11px;
+            color: var(--red);
+        }
+
+        .line-moving .yang-line {
+            background: var(--red);
+        }
+
+        .line-moving .yin-half {
+            background: var(--red);
+        }
+
+        /* ===== INFO TAGS ===== */
+        .info-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 15px 0;
+            justify-content: center
+        }
+
+        .tag {
+            padding: 4px 12px;
+            border-radius: 2px;
+            font-size: 12px;
+            background: #f5f5f5;
+            border: 1px solid var(--border);
+            color: var(--text-light);
+        }
+
+        /* ===== ANALYSIS ===== */
+        .analysis-section {
+            margin-top: 10px
+        }
+
+        .analysis-block {
+            padding: 16px;
+            margin-bottom: 12px;
+            border-radius: 2px;
+            background: #f9f9f9;
+            border-left: 2px solid var(--accent);
+        }
+
+        .analysis-block h3 {
+            font-size: 14px;
+            color: var(--primary);
+            margin-bottom: 8px;
+            font-weight: 400;
+        }
+
+        .analysis-block p {
+            font-size: 13px;
+            line-height: 1.8;
+            color: var(--text)
+        }
+
+        .analysis-block .highlight {
+            color: var(--accent);
+            font-weight: normal;
+        }
+
+        .analysis-block .warn {
+            color: var(--red)
+        }
+
+        .analysis-block .good {
+            color: #4caf50
+        }
+
+        /* ===== FUSHEN ===== */
+        .fushen-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px
+        }
+
+        .fushen-table th,
+        .fushen-table td {
+            padding: 8px 12px;
+            font-size: 13px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .fushen-table th {
+            color: var(--primary);
+            font-weight: 400;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media(max-width:768px) {
+            .container {
+                padding: 10px
+            }
+
+            .card {
+                padding: 16px
+            }
+
+            .hex-container {
+                gap: 15px
+            }
+
+            .hex-panel {
+                min-width: 100%
+            }
+
+            .hex-row {
+                grid-template-columns: 50px 60px 1fr 75px 30px;
+                font-size: 12px
+            }
+
+            .input-row {
+                flex-direction: column
+            }
+
+            .input-group {
+                min-width: 100%
+            }
+        }
+
+        @media(max-width:400px) {
+            .hex-row {
+                grid-template-columns: 40px 50px 1fr 70px 24px;
+                gap: 2px;
+                padding: 6px 2px
+            }
+
+            .hex-nayin {
+                font-size: 11px
+            }
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-light);
+            font-size: 12px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <h1>六爻排盘</h1>
+            <div class="subtitle">周 易 · 纳 甲 · 占 卜</div>
+            <div class="divider"></div>
+        </div>
+
+        <!-- INPUT -->
+        <div class="card" id="inputCard">
+            <div class="card-title">起卦设置</div>
+            <div class="input-row">
+                <div class="input-group">
+                    <label>求测事项</label>
+                    <input type="text" id="question" placeholder="请输入所测之事（可选）">
+                </div>
+                <div class="input-group" style="max-width:160px">
+                    <label>事项类别</label>
+                    <select id="category">
+                        <option value="">请选择</option>
+                        <option value="wealth">求财</option>
+                        <option value="career">事业/求官</option>
+                        <option value="marriage">婚姻感情</option>
+                        <option value="health">疾病健康</option>
+                        <option value="travel">出行</option>
+                        <option value="lawsuit">官司诉讼</option>
+                        <option value="lost">寻人寻物</option>
+                        <option value="study">学业考试</option>
+                        <option value="other">其他</option>
+                    </select>
+                </div>
+            </div>
+            <div class="btn-row">
+                <button class="btn btn-primary" onclick="autoShake()">⚅ 自动起卦</button>
+                <button class="btn" onclick="startManual()">🪙 手动摇卦</button>
+                <button class="btn" onclick="timeShake()">🕐 时间起卦</button>
+                <button class="btn" onclick="startCustom()">📖 指定卦象</button>
+            </div>
+
+            <!-- MANUAL PANEL -->
+            <div class="manual-panel" id="manualPanel">
+                <div class="divider"></div>
+                <p style="color:var(--text-light);font-size:13px;margin-bottom:10px">点击铜钱选择正（字）或反（背），每爻投三次</p>
+                <div class="shake-progress" id="shakeProgress"></div>
+                <div class="coin-area" id="coinArea"></div>
+                <div class="coin-btns">
+                    <button class="coin-btn" onclick="manualCoin(1)" title="正面（字）">字</button>
+                    <button class="coin-btn" onclick="manualCoin(0)" title="反面（背）">背</button>
+                </div>
+                <div class="coin-result-text" id="coinResultText"></div>
+                <button class="btn btn-sm" onclick="cancelManual()" style="margin-top:10px">取消</button>
+            </div>
+
+            <!-- CUSTOM HEXAGRAM PANEL -->
+            <div class="manual-panel" id="customPanel">
+                <div class="divider"></div>
+                <p style="color:var(--text-light);font-size:13px;margin-bottom:10px">选择卦象和动爻</p>
+                <div class="input-group" style="max-width:100%;margin-bottom:16px">
+                    <label>选择卦象</label>
+                    <select id="customHexSelect" style="width:100%">
+                        <option value="">请选择</option>
+                    </select>
+                </div>
+                <div style="margin-bottom:16px">
+                    <label
+                        style="display:block;font-size:13px;color:var(--text-light);margin-bottom:8px">选择动爻（可多选）</label>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+                        <label style="display:flex;align-items:center;gap:4px;cursor:pointer">
+                            <input type="checkbox" id="customMove0" value="0" style="cursor:pointer">
+                            <span style="font-size:13px">初爻</span>
+                        </label>
+                        <label style="display:flex;align-items:center;gap:4px;cursor:pointer">
+                            <input type="checkbox" id="customMove1" value="1" style="cursor:pointer">
+                            <span style="font-size:13px">二爻</span>
+                        </label>
+                        <label style="display:flex;align-items:center;gap:4px;cursor:pointer">
+                            <input type="checkbox" id="customMove2" value="2" style="cursor:pointer">
+                            <span style="font-size:13px">三爻</span>
+                        </label>
+                        <label style="display:flex;align-items:center;gap:4px;cursor:pointer">
+                            <input type="checkbox" id="customMove3" value="3" style="cursor:pointer">
+                            <span style="font-size:13px">四爻</span>
+                        </label>
+                        <label style="display:flex;align-items:center;gap:4px;cursor:pointer">
+                            <input type="checkbox" id="customMove4" value="4" style="cursor:pointer">
+                            <span style="font-size:13px">五爻</span>
+                        </label>
+                        <label style="display:flex;align-items:center;gap:4px;cursor:pointer">
+                            <input type="checkbox" id="customMove5" value="5" style="cursor:pointer">
+                            <span style="font-size:13px">上爻</span>
+                        </label>
+                    </div>
+                </div>
+                <div style="display:flex;gap:10px;justify-content:center">
+                    <button class="btn btn-primary" onclick="confirmCustom()">确定</button>
+                    <button class="btn btn-sm" onclick="cancelCustom()">取消</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESULT -->
+        <div class="result-area" id="resultArea">
+            <!-- DateTime Info -->
+            <div class="card">
+                <div class="card-title">起卦信息</div>
+                <div class="info-tags" id="infoTags"></div>
+            </div>
+
+            <!-- Hexagram Display -->
+            <div class="card">
+                <div class="card-title">卦象排盘</div>
+                <div class="hex-container" id="hexContainer"></div>
+            </div>
+
+            <!-- 伏神 -->
+            <div class="card" id="fushenCard" style="display:none">
+                <div class="card-title">伏神</div>
+                <div id="fushenContent"></div>
+            </div>
+
+            <!-- Analysis -->
+            <div class="card">
+                <div class="card-title">卦象分析</div>
+                <div class="analysis-section" id="analysisSection"></div>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn" onclick="exportToClipboard()">📋 复制卦象</button>
+                <button class="btn" onclick="autoShake()">重新起卦</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">六爻排盘 · 仅供参考 · 不可迷信</div>
+
+    <script>
+        let currentResult = null; // Store current result for export
+
+        // ========== CONSTANTS ==========
+        const TIAN_GAN = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
+        const DI_ZHI = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
+        const WU_XING = ['金', '木', '水', '火', '土'];
+        const DZ_WX = [2, 4, 1, 1, 4, 3, 3, 4, 0, 0, 4, 2]; // 地支对应五行: 子水丑土寅木卯木辰土巳火午火未土申金酉金戌土亥水
+        const WX_NAMES = { 0: '金', 1: '木', 2: '水', 3: '火', 4: '土' };
+        const LIU_QIN = ['兄弟', '父母', '官鬼', '妻财', '子孙'];
+        // 六亲关系: selfWX -> targetWX => 六亲index
+        // 同我=兄弟0, 生我=父母1, 克我=官鬼2, 我克=妻财3, 我生=子孙4
+        const SHENG = [2, 3, 0, 4, 1]; // 金生水,木生火,水生木,火生土,土生金 → X生的=SHENG[X]
+        const KE = [1, 4, 3, 0, 2]; // 金克木,木克土,水克火,火克金,土克水 → X克的=KE[X]
+        const LIU_SHEN = ['青龙', '朱雀', '勾陈', '螣蛇', '白虎', '玄武'];
+        const TRIGRAM_NAMES = ['坤', '艮', '坎', '巽', '震', '离', '兑', '乾'];
+        const TRIGRAM_WX = [4, 4, 2, 1, 1, 3, 0, 0]; // 坤土,艮土,坎水,巽木,震木,离火,兑金,乾金
+        const TRIGRAM_NATURE = ['地', '山', '水', '风', '雷', '火', '泽', '天'];
+
+        // 纳甲: [天干index, [地支index × 3]] for inner and outer
+        const NA_JIA_INNER = [
+            [1, [7, 5, 3]],   // 坤: 乙 未巳卯
+            [2, [4, 6, 8]],   // 艮: 丙 辰午申
+            [4, [2, 4, 6]],   // 坎: 戊 寅辰午
+            [7, [1, 11, 9]],  // 巽: 辛 丑亥酉
+            [6, [0, 2, 4]],   // 震: 庚 子寅辰
+            [5, [3, 1, 11]],  // 离: 己 卯丑亥
+            [3, [5, 3, 1]],   // 兑: 丁 巳卯丑
+            [0, [0, 2, 4]],   // 乾: 甲 子寅辰
+        ];
+        const NA_JIA_OUTER = [
+            [9, [1, 11, 9]],  // 坤: 癸 丑亥酉
+            [2, [10, 0, 2]],  // 艮: 丙 戌子寅
+            [4, [8, 10, 0]],  // 坎: 戊 申戌子
+            [7, [7, 5, 3]],   // 巽: 辛 未巳卯
+            [6, [6, 8, 10]],  // 震: 庚 午申戌
+            [5, [9, 7, 5]],   // 离: 己 酉未巳
+            [3, [11, 9, 7]],  // 兑: 丁 亥酉未
+            [8, [6, 8, 10]],  // 乾: 壬 午申戌
+        ];
+
+        // 64卦名 [upper][lower], trigram index: 坤0 艮1 坎2 巽3 震4 离5 兑6 乾7
+        const GUA_NAMES = [
+            ['坤为地', '山地剥', '水地比', '风地观', '雷地豫', '火地晋', '泽地萃', '天地否'],
+            ['地山谦', '艮为山', '水山蹇', '风山渐', '雷山小过', '火山旅', '泽山咸', '天山遁'],
+            ['地水师', '山水蒙', '坎为水', '风水涣', '水雷屯', '火水未济', '泽水困', '天水讼'],
+            ['地风升', '山风蛊', '水风井', '巽为风', '雷风恒', '火风鼎', '泽风大过', '天风姤'],
+            ['地雷复', '山雷颐', '雷水解', '风雷益', '震为雷', '火雷噬嗑', '泽雷随', '天雷无妄'],
+            ['地火明夷', '山火贲', '水火既济', '风火家人', '雷火丰', '离为火', '泽火革', '天火同人'],
+            ['地泽临', '山泽损', '水泽节', '风泽中孚', '雷泽归妹', '火泽睽', '兑为泽', '天泽履'],
+            ['地天泰', '山天大畜', '水天需', '风天小畜', '雷天大壮', '火天大有', '泽天夬', '乾为天'],
+        ];
+
+        // ========== PALACE (八宫) ==========
+        // Generate palace assignments: palaceMap[hexKey] = {palace, position}
+        // hexKey = upperTrigram * 8 + lowerTrigram
+        const palaceMap = {};
+        const TRIGRAM_BITS = [[0, 0, 0], [0, 0, 1], [0, 1, 0], [0, 1, 1], [1, 0, 0], [1, 0, 1], [1, 1, 0], [1, 1, 1]];
+
+        function initPalaces() {
+            for (let p = 0; p < 8; p++) {
+                const bits = TRIGRAM_BITS[p];
+                let cur = [...bits, ...bits]; // 6 lines, bottom to top
+                for (let pos = 0; pos < 8; pos++) {
+                    if (pos === 0) {
+                        cur = [...bits, ...bits];
+                    } else if (pos >= 1 && pos <= 5) {
+                        cur[pos - 1] = 1 - cur[pos - 1];
+                    } else if (pos === 6) { // 游魂: toggle line 4 back
+                        cur[3] = 1 - cur[3];
+                    } else if (pos === 7) { // 归魂: restore lower trigram
+                        cur[0] = bits[0]; cur[1] = bits[1]; cur[2] = bits[2];
+                    }
+                    const lower = cur[0] * 4 + cur[1] * 2 + cur[2];
+                    const upper = cur[3] * 4 + cur[4] * 2 + cur[5];
+                    const key = upper * 8 + lower;
+                    if (!(key in palaceMap)) {
+                        palaceMap[key] = { palace: p, position: pos };
+                    }
+                }
+            }
+        }
+        initPalaces();
+
+        // 世应 by position in palace
+        const SHI_YING = [
+            [5, 2], // 八纯: 世6(idx5) 应3(idx2)
+            [0, 3], // 一世
+            [1, 4], // 二世
+            [2, 5], // 三世
+            [3, 0], // 四世
+            [4, 1], // 五世
+            [3, 0], // 游魂
+            [2, 5], // 归魂
+        ];
+        const POS_NAMES = ['八纯卦', '一世卦', '二世卦', '三世卦', '四世卦', '五世卦', '游魂卦', '归魂卦'];
+
+        // ========== CALENDAR ==========
+        function julianDay(y, m, d) {
+            const a = Math.floor((14 - m) / 12);
+            const yy = y + 4800 - a;
+            const mm = m + 12 * a - 3;
+            return d + Math.floor((153 * mm + 2) / 5) + 365 * yy +
+                Math.floor(yy / 4) - Math.floor(yy / 100) + Math.floor(yy / 400) - 32045;
+        }
+
+        function getDayGanZhi(date) {
+            const jd = julianDay(date.getFullYear(), date.getMonth() + 1, date.getDate());
+            return { gan: ((jd + 9) % 10 + 10) % 10, zhi: ((jd + 1) % 12 + 12) % 12 };
+        }
+
+        function getYearGanZhi(y) {
+            return { gan: ((y - 4) % 10 + 10) % 10, zhi: ((y - 4) % 12 + 12) % 12 };
+        }
+
+        // 月建 (approximate by solar terms)
+        function getMonthZhi(month, day) {
+            // Solar term boundaries (approximate)
+            const terms = [
+                [2, 4], [3, 6], [4, 5], [5, 6], [6, 6], [7, 7],
+                [8, 7], [9, 8], [10, 8], [11, 7], [12, 7], [1, 5]
+            ];
+            // 月支: 寅=2月, 卯=3月 ...
+            let mz;
+            for (let i = 0; i < 12; i++) {
+                const [tm, td] = terms[i];
+                const [nm, nd] = terms[(i + 1) % 12];
+                if (month === tm && day >= td) { mz = (2 + i) % 12; break; }
+                if (month === nm && day < nd) { mz = (2 + i) % 12; break; }
+            }
+            if (mz === undefined) mz = (month + 1) % 12;
+            return mz;
+        }
+
+        function getMonthGan(yearGan, monthZhi) {
+            // 年上起月法
+            const base = [2, 4, 6, 8, 0]; // 甲己年起丙寅
+            const startGan = base[yearGan % 5];
+            const offset = ((monthZhi - 2) % 12 + 12) % 12;
+            return (startGan + offset) % 10;
+        }
+
+        function formatGanZhi(g, z) { return TIAN_GAN[g] + DI_ZHI[z]; }
+        function getGanZhiWX(z) { return DZ_WX[z]; }
+
+        // ========== LIUQIN ==========
+        function getLiuQin(selfWX, targetWX) {
+            if (targetWX === selfWX) return 0; // 兄弟
+            // 生我者
+            if (SHENG[targetWX] === selfWX) return 1; // 父母
+            // 克我者
+            if (KE[targetWX] === selfWX) return 2; // 官鬼
+            // 我克者
+            if (KE[selfWX] === targetWX) return 3; // 妻财
+            // 我生者
+            if (SHENG[selfWX] === targetWX) return 4; // 子孙
+            return 0;
+        }
+
+        // ========== SIX SPIRITS ==========
+        function getLiuShen(dayGan) {
+            // 甲乙起青龙, 丙丁起朱雀, 戊己起勾陈, 庚辛起白虎, 壬癸起玄武
+            const startIdx = Math.floor(dayGan / 2);
+            const order = [];
+            for (let i = 0; i < 6; i++) order.push(LIU_SHEN[(startIdx + i) % 6]);
+            return order; // [初爻, 二爻, ..., 上爻]
+        }
+
+        // ========== HEXAGRAM ANALYSIS ENGINE ==========
+        function analyzeHexagram(lines, date) {
+            // lines: array of 6 values (6=老阴, 7=少阳, 8=少阴, 9=老阳) from bottom to top
+            const dayGZ = getDayGanZhi(date);
+            const yearGZ = getYearGanZhi(date.getFullYear());
+            const monthZhi = getMonthZhi(date.getMonth() + 1, date.getDate());
+            const monthGan = getMonthGan(yearGZ.gan, monthZhi);
+
+            // Determine original lines (yang/yin)
+            const original = lines.map(v => (v === 7 || v === 9) ? 1 : 0);
+            const moving = lines.map(v => (v === 6 || v === 9));
+            const changed = original.map((v, i) => moving[i] ? 1 - v : v);
+
+            // Trigrams
+            const lowerOrig = original[0] * 4 + original[1] * 2 + original[2];
+            const upperOrig = original[3] * 4 + original[4] * 2 + original[5];
+            const lowerChg = changed[0] * 4 + changed[1] * 2 + changed[2];
+            const upperChg = changed[3] * 4 + changed[4] * 2 + changed[5];
+
+            const hasMoving = moving.some(m => m);
+
+            // Palace & 世应
+            const hexKey = upperOrig * 8 + lowerOrig;
+            const pInfo = palaceMap[hexKey] || { palace: 0, position: 0 };
+            const palaceWX = TRIGRAM_WX[pInfo.palace];
+            const [shiIdx, yingIdx] = SHI_YING[pInfo.position];
+
+            // 变卦世应
+            let chgShiIdx = -1, chgYingIdx = -1;
+            if (hasMoving) {
+                const chgKey = upperChg * 8 + lowerChg;
+                const cpInfo = palaceMap[chgKey] || { palace: 0, position: 0 };
+                [chgShiIdx, chgYingIdx] = SHI_YING[cpInfo.position];
+            }
+
+            // 纳甲 for original
+            const naJiaOrig = [];
+            for (let i = 0; i < 6; i++) {
+                const tri = i < 3 ? lowerOrig : upperOrig;
+                const pos = i < 3 ? i : i - 3;
+                const nj = i < 3 ? NA_JIA_INNER[tri] : NA_JIA_OUTER[tri];
+                const gan = nj[0];
+                const zhi = nj[1][pos];
+                const wx = DZ_WX[zhi];
+                const lq = getLiuQin(palaceWX, wx);
+                naJiaOrig.push({ gan, zhi, wx, lq });
+            }
+
+            // 纳甲 for changed
+            const naJiaChg = [];
+            if (hasMoving) {
+                for (let i = 0; i < 6; i++) {
+                    const tri = i < 3 ? lowerChg : upperChg;
+                    const pos = i < 3 ? i : i - 3;
+                    const nj = i < 3 ? NA_JIA_INNER[tri] : NA_JIA_OUTER[tri];
+                    const gan = nj[0];
+                    const zhi = nj[1][pos];
+                    const wx = DZ_WX[zhi];
+                    const chgKey = upperChg * 8 + lowerChg;
+                    const cpInfo = palaceMap[chgKey] || { palace: 0, position: 0 };
+                    const cpWX = TRIGRAM_WX[cpInfo.palace];
+                    const lq = getLiuQin(cpWX, wx);
+                    naJiaChg.push({ gan, zhi, wx, lq });
+                }
+            }
+
+            // 六神
+            const liuShen = getLiuShen(dayGZ.gan);
+
+            // 伏神
+            const presentLQ = new Set(naJiaOrig.map(n => n.lq));
+            const fuShen = [];
+            for (let lq = 0; lq < 5; lq++) {
+                if (!presentLQ.has(lq)) {
+                    // Find in pure palace hexagram
+                    const pureBits = TRIGRAM_BITS[pInfo.palace];
+                    const pureLower = pureBits[0] * 4 + pureBits[1] * 2 + pureBits[2];
+                    const pureUpper = pureLower; // pure hexagram has same upper and lower
+                    for (let i = 0; i < 6; i++) {
+                        const tri = i < 3 ? pureLower : pureUpper;
+                        const pos = i < 3 ? i : i - 3;
+                        const nj = i < 3 ? NA_JIA_INNER[tri] : NA_JIA_OUTER[tri];
+                        const wx = DZ_WX[nj[1][pos]];
+                        const flq = getLiuQin(palaceWX, wx);
+                        if (flq === lq) {
+                            fuShen.push({
+                                lqName: LIU_QIN[lq],
+                                ganZhi: TIAN_GAN[nj[0]] + DI_ZHI[nj[1][pos]],
+                                wx: WX_NAMES[wx],
+                                underLine: i,
+                                underLQ: LIU_QIN[naJiaOrig[i].lq],
+                                underGZ: TIAN_GAN[naJiaOrig[i].gan] + DI_ZHI[naJiaOrig[i].zhi],
+                            });
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return {
+                original, changed, moving, hasMoving,
+                lowerOrig, upperOrig, lowerChg, upperChg,
+                hexNameOrig: GUA_NAMES[upperOrig][lowerOrig],
+                hexNameChg: hasMoving ? GUA_NAMES[upperChg][lowerChg] : null,
+                palace: pInfo.palace, palaceName: TRIGRAM_NAMES[pInfo.palace],
+                palaceWX, posName: POS_NAMES[pInfo.position],
+                shiIdx, yingIdx,
+                chgShiIdx, chgYingIdx,
+                naJiaOrig, naJiaChg, liuShen, fuShen,
+                dayGZ, yearGZ, monthZhi, monthGan,
+                lines
+            };
+        }
+
+        // ========== YONGSHEN (用神) ==========
+        function getYongShen(category) {
+            // 用神 by category
+            const map = {
+                wealth: { lq: 3, name: '妻财', desc: '求财以妻财爻为用神' },
+                career: { lq: 2, name: '官鬼', desc: '求官事业以官鬼爻为用神' },
+                marriage: { lq: 3, name: '妻财/官鬼', desc: '男测婚以妻财为用神，女测婚以官鬼为用神' },
+                health: { lq: 2, name: '官鬼', desc: '测病以官鬼爻为用神（代表疾病）' },
+                travel: { lq: 4, name: '子孙', desc: '出行以子孙爻为用神，世爻代表自己' },
+                lawsuit: { lq: 2, name: '官鬼', desc: '官司以官鬼爻为用神' },
+                lost: { lq: 3, name: '妻财', desc: '寻物以妻财爻为用神，寻人以用爻为用' },
+                study: { lq: 1, name: '父母', desc: '学业以父母爻为用神' },
+                other: null,
+            };
+            return map[category] || null;
+        }
+
+        // ========== TEXT ANALYSIS ==========
+        function generateAnalysis(result, category) {
+            const blocks = [];
+            const palWX = WX_NAMES[result.palaceWX];
+            const monthWX = WX_NAMES[DZ_WX[result.monthZhi]];
+            const dayWX = WX_NAMES[DZ_WX[result.dayGZ.zhi]];
+
+            // 基本卦象
+            let basic = `本卦 <span class="highlight">${result.hexNameOrig}</span>，属${result.palaceName}宫（${palWX}），为${result.posName}。`;
+            if (result.hasMoving) {
+                basic += `变卦 <span class="highlight">${result.hexNameChg}</span>。`;
+                const movingLines = result.moving.map((m, i) => m ? `${'初二三四五上'[i]}爻` : null).filter(Boolean);
+                basic += `动爻：${movingLines.join('、')}。`;
+            } else {
+                basic += '无动爻，卦象安静。';
+            }
+            blocks.push({ title: '卦象概要', content: basic });
+
+            // 世应分析
+            const shiNJ = result.naJiaOrig[result.shiIdx];
+            const yingNJ = result.naJiaOrig[result.yingIdx];
+            let shiying = `世爻在${'初二三四五上'[result.shiIdx]}爻，${LIU_QIN[shiNJ.lq]}${TIAN_GAN[shiNJ.gan]}${DI_ZHI[shiNJ.zhi]}${WX_NAMES[shiNJ.wx]}；`;
+            shiying += `应爻在${'初二三四五上'[result.yingIdx]}爻，${LIU_QIN[yingNJ.lq]}${TIAN_GAN[yingNJ.gan]}${DI_ZHI[yingNJ.zhi]}${WX_NAMES[yingNJ.wx]}。`;
+
+            // 世应关系
+            const shiWX = shiNJ.wx, yingWX = yingNJ.wx;
+            if (shiWX === yingWX) shiying += '世应比和，双方意见一致。';
+            else if (SHENG[shiWX] === yingWX) shiying += '世生应，主动付出方为我。';
+            else if (SHENG[yingWX] === shiWX) shiying += '应生世，他方有助于我。';
+            else if (KE[shiWX] === yingWX) shiying += '世克应，我可制约对方。';
+            else if (KE[yingWX] === shiWX) shiying += '应克世，对方有制约之势。';
+            blocks.push({ title: '世应分析', content: shiying });
+
+            // 用神分析
+            const ys = getYongShen(category);
+            if (ys) {
+                let ysContent = ys.desc + '。';
+                // Find 用神 lines
+                const ysLines = result.naJiaOrig.map((nj, i) => ({ ...nj, idx: i }))
+                    .filter(nj => nj.lq === ys.lq);
+                if (ysLines.length > 0) {
+                    ysLines.forEach(line => {
+                        const pos = '初二三四五上'[line.idx];
+                        const gz = TIAN_GAN[line.gan] + DI_ZHI[line.zhi];
+                        const wx = WX_NAMES[line.wx];
+                        ysContent += `用神${LIU_QIN[line.lq]}在${pos}爻，${gz}${wx}`;
+
+                        // 月建对用神
+                        const mwx = DZ_WX[result.monthZhi];
+                        if (SHENG[mwx] === line.wx) ysContent += '，<span class="good">月建生用神，旺</span>';
+                        else if (KE[mwx] === line.wx) ysContent += '，<span class="warn">月建克用神，衰</span>';
+                        else if (mwx === line.wx) ysContent += '，<span class="good">月建比和用神，旺相</span>';
+
+                        // 日辰对用神
+                        const dwx = DZ_WX[result.dayGZ.zhi];
+                        if (SHENG[dwx] === line.wx) ysContent += '，<span class="good">日辰生用神，得力</span>';
+                        else if (KE[dwx] === line.wx) ysContent += '，<span class="warn">日辰克用神，受制</span>';
+
+                        // 动爻
+                        if (result.moving[line.idx]) ysContent += '，用神发动，事有变化';
+                        ysContent += '。';
+                    });
+                } else {
+                    ysContent += `<span class="warn">卦中不现用神，需看伏神。</span>`;
+                    const fus = result.fuShen.find(f => f.lqName === LIU_QIN[ys.lq]);
+                    if (fus) {
+                        ysContent += `伏神${fus.lqName}${fus.ganZhi}${fus.wx}，伏于${fus.underLQ}${fus.underGZ}之下。`;
+                    }
+                }
+                blocks.push({ title: '用神分析', content: ysContent });
+            }
+
+            // 动爻分析
+            if (result.hasMoving) {
+                let dongContent = '';
+                result.moving.forEach((m, i) => {
+                    if (!m) return;
+                    const pos = '初二三四五上'[i];
+                    const nj = result.naJiaOrig[i];
+                    const gz = TIAN_GAN[nj.gan] + DI_ZHI[nj.zhi];
+                    const lqName = LIU_QIN[nj.lq];
+                    const chgNJ = result.naJiaChg[i];
+                    const chgGZ = TIAN_GAN[chgNJ.gan] + DI_ZHI[chgNJ.zhi];
+                    const chgLQ = LIU_QIN[chgNJ.lq];
+                    dongContent += `${pos}爻动：${lqName}${gz}${WX_NAMES[nj.wx]} → 变为${chgLQ}${chgGZ}${WX_NAMES[chgNJ.wx]}`;
+                    // 动变关系
+                    if (nj.wx === chgNJ.wx) dongContent += '（比和，变化不大）';
+                    else if (SHENG[chgNJ.wx] === nj.wx) dongContent += '（回头生，吉）';
+                    else if (KE[chgNJ.wx] === nj.wx) dongContent += '（回头克，凶）';
+                    dongContent += '。';
+                });
+                blocks.push({ title: '动爻分析', content: dongContent });
+            }
+
+            // 综合判断
+            let summary = '';
+            const shiMoving = result.moving[result.shiIdx];
+            const yingMoving = result.moving[result.yingIdx];
+            if (shiMoving) summary += '世爻发动，事情由我方主导。';
+            if (yingMoving) summary += '应爻发动，对方亦有变化。';
+
+            const mwx = DZ_WX[result.monthZhi];
+            const dwx = DZ_WX[result.dayGZ.zhi];
+            // 世爻旺衰
+            if (SHENG[mwx] === shiWX || mwx === shiWX) summary += '<span class="good">世爻得月令生扶，自身条件有利。</span>';
+            else if (KE[mwx] === shiWX) summary += '<span class="warn">世爻受月建克制，自身条件不利。</span>';
+            if (SHENG[dwx] === shiWX) summary += '<span class="good">世爻得日辰生助。</span>';
+            else if (KE[dwx] === shiWX) summary += '<span class="warn">世爻被日辰克制。</span>';
+
+            if (!summary) summary = '卦象平稳，需结合具体事项详细分析。';
+            summary += '<br><br><em style="color:var(--text3)">以上分析仅供参考，六爻断卦需结合实际情况综合判断。</em>';
+            blocks.push({ title: '综合判断', content: summary });
+
+            return blocks;
+        }
+
+        // ========== RENDER ==========
+        function renderResult(result) {
+            currentResult = result; // Save for export
+            const area = document.getElementById('resultArea');
+            area.classList.add('active');
+
+            // Info tags
+            const dayStr = formatGanZhi(result.dayGZ.gan, result.dayGZ.zhi);
+            const yearStr = formatGanZhi(result.yearGZ.gan, result.yearGZ.zhi);
+            const monthStr = TIAN_GAN[result.monthGan] + DI_ZHI[result.monthZhi];
+            const q = document.getElementById('question').value;
+            const tags = document.getElementById('infoTags');
+            tags.innerHTML = `
+    <span class="tag">📅 ${yearStr}年 ${monthStr}月 ${dayStr}日</span>
+    <span class="tag">🏛 ${result.palaceName}宫 · ${WX_NAMES[result.palaceWX]}</span>
+    <span class="tag">📋 ${result.posName}</span>
+    ${q ? `<span class="tag">❓ ${q}</span>` : ''}
+  `;
+
+            // Hexagram panels
+            const container = document.getElementById('hexContainer');
+            let html = renderHexPanel(result, false);
+            if (result.hasMoving) {
+                html += `<div style="display:flex;align-items:center;font-size:28px;color:var(--gold3)">➠</div>`;
+                html += renderHexPanel(result, true);
+            }
+            container.innerHTML = html;
+
+            // 伏神
+            const fushenCard = document.getElementById('fushenCard');
+            if (result.fuShen.length > 0) {
+                fushenCard.style.display = 'block';
+                let ft = '<table class="fushen-table"><tr><th>伏神</th><th>干支</th><th>五行</th><th>伏于</th></tr>';
+                result.fuShen.forEach(f => {
+                    ft += `<tr><td>${f.lqName}</td><td>${f.ganZhi}</td><td>${f.wx}</td>
+        <td>${'初二三四五上'[f.underLine]}爻 ${f.underLQ}${f.underGZ}下</td></tr>`;
+                });
+                ft += '</table>';
+                document.getElementById('fushenContent').innerHTML = ft;
+            } else {
+                fushenCard.style.display = 'none';
+            }
+
+            // Analysis
+            const cat = document.getElementById('category').value;
+            const blocks = generateAnalysis(result, cat);
+            const as = document.getElementById('analysisSection');
+            as.innerHTML = blocks.map(b => `
+    <div class="analysis-block"><h3>${b.title}</h3><p>${b.content}</p></div>
+  `).join('');
+
+            area.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function renderHexPanel(result, isChanged) {
+            const lines = isChanged ? result.changed : result.original;
+            const naJia = isChanged ? result.naJiaChg : result.naJiaOrig;
+            const upper = isChanged ? result.upperChg : result.upperOrig;
+            const lower = isChanged ? result.lowerChg : result.lowerOrig;
+            const name = isChanged ? result.hexNameChg : result.hexNameOrig;
+            const label = isChanged ? '变卦' : '本卦';
+
+            // For changed hexagram, compute its own palace for 六亲
+            let shiIdx = -1, yingIdx = -1;
+            if (!isChanged) {
+                shiIdx = result.shiIdx;
+                yingIdx = result.yingIdx;
+            } else {
+                shiIdx = result.chgShiIdx;
+                yingIdx = result.chgYingIdx;
+            }
+
+            let html = `<div class="hex-panel"><div class="hex-panel-title">${name}</div>`;
+            html += `<div class="hex-panel-subtitle">${label} · ${TRIGRAM_NATURE[upper]}${TRIGRAM_NATURE[lower]}卦</div>`;
+            html += `<div class="hex-table">`;
+
+            const LINE_LABELS = ['初爻', '二爻', '三爻', '四爻', '五爻', '上爻'];
+            const liuShen = result.liuShen;
+
+            for (let i = 5; i >= 0; i--) {
+                const isYang = lines[i] === 1;
+                const isMoving = !isChanged && result.moving[i];
+                const nj = naJia[i];
+                const gz = TIAN_GAN[nj.gan] + DI_ZHI[nj.zhi];
+                const wxName = WX_NAMES[nj.wx];
+                const lqName = LIU_QIN[nj.lq];
+                const movingClass = isMoving ? ' line-moving' : '';
+
+                let lineHTML;
+                if (isYang) {
+                    lineHTML = `<div class="yang-line"></div>${isMoving ? '<span class="moving-marker">○</span>' : ''}`;
+                } else {
+                    lineHTML = `<div class="yin-line"><div class="yin-half"></div><div class="yin-half"></div></div>${isMoving ? '<span class="moving-marker">×</span>' : ''}`;
+                }
+
+                let syLabel = '';
+                if (i === shiIdx) syLabel = '世';
+                else if (i === yingIdx) syLabel = '应';
+
+                html += `<div class="hex-row${movingClass}">
+      <span class="hex-spirit">${!isChanged ? liuShen[i] : ''}</span>
+      <span class="hex-relative">${lqName}${DI_ZHI[nj.zhi]}</span>
+      <div class="hex-line-wrap"><div class="hex-line">${lineHTML}</div></div>
+      <span class="hex-nayin">${gz}${wxName}</span>
+      <span class="hex-shiying">${syLabel}</span>
+    </div>`;
+            }
+
+            html += `</div></div>`;
+            return html;
+        }
+
+        // ========== CASTING METHODS ==========
+        function autoShake() {
+            const lines = [];
+            for (let i = 0; i < 6; i++) {
+                // Simulate 3 coins: 3=yin(head), 2=yang(tail). Sum of 3 coins: 6,7,8,9
+                const coins = [0, 0, 0].map(() => Math.random() < 0.5 ? 3 : 2);
+                lines.push(coins.reduce((a, b) => a + b, 0));
+            }
+            showCoinAnimation(lines);
+        }
+
+        function showCoinAnimation(lines) {
+            const coinArea = document.getElementById('coinArea');
+            coinArea.innerHTML = '<div class="coin flipping">卦</div><div class="coin flipping" style="animation-delay:.1s">卦</div><div class="coin flipping" style="animation-delay:.2s">卦</div>';
+            setTimeout(() => {
+                coinArea.innerHTML = '';
+                const result = analyzeHexagram(lines, new Date());
+                renderResult(result);
+            }, 800);
+        }
+
+        function timeShake() {
+            const now = new Date();
+            const y = now.getFullYear();
+            const m = now.getMonth() + 1;
+            const d = now.getDate();
+            const h = now.getHours();
+            const upperNum = (y + m + d) % 8;
+            const lowerNum = (y + m + d + h) % 8;
+            const movingLine = (y + m + d + h) % 6;
+
+            // Generate lines from trigrams
+            const upperBits = TRIGRAM_BITS[upperNum];
+            const lowerBits = TRIGRAM_BITS[lowerNum];
+            const allBits = [...lowerBits, ...upperBits];
+            const lines = allBits.map((b, i) => {
+                if (i === movingLine) return b === 1 ? 9 : 6; // moving
+                return b === 1 ? 7 : 8; // static
+            });
+            showCoinAnimation(lines);
+        }
+
+        // ========== MANUAL SHAKE ==========
+        let manualState = { lineIdx: 0, coinCount: 0, coins: [], allLines: [] };
+
+        function startManual() {
+            manualState = { lineIdx: 0, coinCount: 0, coins: [], allLines: [] };
+            document.getElementById('manualPanel').classList.add('active');
+            updateManualUI();
+        }
+
+        function cancelManual() {
+            document.getElementById('manualPanel').classList.remove('active');
+        }
+
+        function updateManualUI() {
+            const prog = document.getElementById('shakeProgress');
+            let html = '';
+            for (let i = 0; i < 6; i++) {
+                const cls = i < manualState.lineIdx ? 'done' : (i === manualState.lineIdx ? 'current' : '');
+                const label = i < manualState.lineIdx ? (manualState.allLines[i] % 2 === 1 ? '⚊' : '⚋') : (i + 1);
+                html += `<div class="shake-dot ${cls}">${label}</div>`;
+            }
+            prog.innerHTML = html;
+
+            const coinArea = document.getElementById('coinArea');
+            let coinHTML = '';
+            for (let i = 0; i < 3; i++) {
+                if (i < manualState.coinCount) {
+                    coinHTML += `<div class="coin">${manualState.coins[i] === 1 ? '字' : '背'}</div>`;
+                } else {
+                    coinHTML += `<div class="coin" style="opacity:.3">?</div>`;
+                }
+            }
+            coinArea.innerHTML = coinHTML;
+
+            const text = document.getElementById('coinResultText');
+            if (manualState.lineIdx < 6) {
+                text.textContent = `第${'初二三四五上'[manualState.lineIdx]}爻 · 第${manualState.coinCount + 1}次投掷`;
+            }
+        }
+
+        function manualCoin(value) {
+            if (manualState.lineIdx >= 6) return;
+            manualState.coins.push(value);
+            manualState.coinCount++;
+
+            if (manualState.coinCount === 3) {
+                // Calculate: 字(1)=3, 背(0)=2
+                const sum = manualState.coins.reduce((a, b) => a + (b === 1 ? 3 : 2), 0);
+                manualState.allLines.push(sum);
+                manualState.lineIdx++;
+                manualState.coinCount = 0;
+                manualState.coins = [];
+
+                if (manualState.lineIdx === 6) {
+                    document.getElementById('manualPanel').classList.remove('active');
+                    const result = analyzeHexagram(manualState.allLines, new Date());
+                    renderResult(result);
+                    return;
+                }
+            }
+            updateManualUI();
+        }
+
+        // ========== CUSTOM HEXAGRAM ==========
+        function initCustomHexSelect() {
+            const select = document.getElementById('customHexSelect');
+            let html = '<option value="">请选择</option>';
+
+            // Generate all 64 hexagrams
+            for (let upper = 0; upper < 8; upper++) {
+                for (let lower = 0; lower < 8; lower++) {
+                    const name = GUA_NAMES[upper][lower];
+                    const value = upper * 8 + lower;
+                    html += `<option value="${value}">${name}</option>`;
+                }
+            }
+            select.innerHTML = html;
+        }
+
+        function startCustom() {
+            // Initialize select if not done
+            if (document.getElementById('customHexSelect').options.length === 1) {
+                initCustomHexSelect();
+            }
+            // Reset selections
+            document.getElementById('customHexSelect').value = '';
+            for (let i = 0; i < 6; i++) {
+                document.getElementById(`customMove${i}`).checked = false;
+            }
+            document.getElementById('customPanel').classList.add('active');
+        }
+
+        function cancelCustom() {
+            document.getElementById('customPanel').classList.remove('active');
+        }
+
+        function confirmCustom() {
+            const hexValue = document.getElementById('customHexSelect').value;
+            if (!hexValue) {
+                alert('请选择卦象');
+                return;
+            }
+
+            const value = parseInt(hexValue);
+            const upper = Math.floor(value / 8);
+            const lower = value % 8;
+
+            // Get bits for upper and lower trigrams
+            const upperBits = TRIGRAM_BITS[upper];
+            const lowerBits = TRIGRAM_BITS[lower];
+            const allBits = [...lowerBits, ...upperBits]; // bottom to top
+
+            // Check which lines are moving
+            const movingLines = [];
+            for (let i = 0; i < 6; i++) {
+                if (document.getElementById(`customMove${i}`).checked) {
+                    movingLines.push(i);
+                }
+            }
+
+            // Generate lines array (6,7,8,9)
+            const lines = allBits.map((bit, i) => {
+                const isMoving = movingLines.includes(i);
+                if (bit === 1) {
+                    // Yang line
+                    return isMoving ? 9 : 7; // 9=老阳(moving), 7=少阳(static)
+                } else {
+                    // Yin line
+                    return isMoving ? 6 : 8; // 6=老阴(moving), 8=少阴(static)
+                }
+            });
+
+            document.getElementById('customPanel').classList.remove('active');
+            const result = analyzeHexagram(lines, new Date());
+            renderResult(result);
+        }
+
+        async function exportToClipboard() {
+            if (!currentResult) return;
+            const r = currentResult;
+
+            // 1. Basic Info
+            const q = document.getElementById('question').value || '未指定事项';
+            const cat = document.getElementById('category').options[document.getElementById('category').selectedIndex].text;
+            const date = `${r.yearGZ.gan}${r.yearGZ.zhi}年 ${TIAN_GAN[r.monthGan]}${DI_ZHI[r.monthZhi]}月 ${TIAN_GAN[r.dayGZ.gan]}${DI_ZHI[r.dayGZ.zhi]}日`;
+
+            let text = `【六爻占卜求测】\n`;
+            text += `求测事项：${q}\n`;
+            text += `事项类别：${cat}\n`;
+            text += `起卦时间：${date} (空亡: ${getKongWang(r.dayGZ)})\n`;
+            text += `\n【卦象信息】\n`;
+            text += `本卦：${r.hexNameOrig} (${r.palaceName}宫${r.posName})\n`;
+            if (r.hasMoving) text += `变卦：${r.hexNameChg}\n`;
+            else text += `变卦：(无)\n`;
+
+            text += `\n【爻位详情】\n`;
+            // Header
+            text += `六神\t伏神\t【本卦】\t\t\t变卦\n`;
+
+            for (let i = 5; i >= 0; i--) {
+                const nj = r.naJiaOrig[i];
+                const isMoving = r.moving[i];
+                const lineName = (nj.gan % 2 === 1 ? '九' : '六') + '初二三四五上'[i]; // Roughly
+
+                // Spirit
+                let row = `${r.liuShen[i]}\t`;
+
+                // Fushen
+                const fu = r.fuShen.find(f => f.underLine === i);
+                row += fu ? `${fu.lqName}${fu.ganZhi}` : ' -- ';
+                row += '\t';
+
+                // Original Line
+                const shiying = (i === r.shiIdx ? '世' : (i === r.yingIdx ? '应' : '  '));
+                const lq = LIU_QIN[nj.lq];
+                const zhi = DI_ZHI[nj.zhi]; // Branch
+                const gz = TIAN_GAN[nj.gan] + DI_ZHI[nj.zhi];
+                const wx = WX_NAMES[nj.wx];
+                const moveMark = isMoving ? (r.original[i] === 1 ? ' O-> ' : ' X-> ') : '     ';
+
+                row += `${shiying} ${lq}${zhi} ${gz}${wx} ${moveMark}`;
+
+                // Changed Line
+                if (isMoving) {
+                    const cnj = r.naJiaChg[i];
+                    const clq = LIU_QIN[cnj.lq];
+                    const czhi = DI_ZHI[cnj.zhi];
+                    const cgz = TIAN_GAN[cnj.gan] + DI_ZHI[cnj.zhi];
+                    const cwx = WX_NAMES[cnj.wx];
+                    row += `${clq}${czhi} ${cgz}${cwx}`;
+                }
+
+                text += row + '\n';
+            }
+
+            text += `\n【AI 分析指令】\n`;
+            text += `作为一个精通六爻预测的专家，请根据上述卦象信息进行详细分析。\n`;
+            text += `1. 分析世应关系，判断求测人与事物的关系。\n`;
+            text += `2. 根据求测类别（${cat}）确定用神，分析用神旺衰（月建、日辰、动爻的影响）。\n`;
+            text += `3. 分析动爻的生克冲合，以及变爻的回头生/克。\n`;
+            text += `4. 结合六神含义，分析事情的性质和细节。\n`;
+            text += `5. 综合给出吉凶判断和建议。\n`;
+
+            try {
+                await navigator.clipboard.writeText(text);
+                alert('✨ 卦象与AI提示词已复制到剪贴板！\n您可以直接粘贴发送给AI助手进行解读。');
+            } catch (err) {
+                console.error('Failed to copy: ', err);
+                alert('复制失败，请手动复制。');
+            }
+        }
+
+        function getKongWang(dayGZ) {
+            // 旬空 calculation: (DayZhi - DayGan) / 2 ... simplify logic
+            // 甲子0旬 -> 戌亥(10,11)
+            // (zhi - gan + 10) % 12 -> gives the first branch of the next decade? No.
+            // 甲(0)子(0) -> 0. 
+            // 旬空 index = (zhi - gan + 10) % 12? 
+            // ex: 甲(0)子(0) -> 10(戌), 11(亥). (0-0+10)%12 = 10. Correct.
+            // ex: 甲(0)寅(2) -> (2-0+10)%12 = 0(子), 1(丑). Correct.
+            const start = (dayGZ.zhi - dayGZ.gan + 10) % 12;
+            return DI_ZHI[start] + DI_ZHI[(start + 1) % 12];
+        }
+    </script>
+</body>
+
+</html>
